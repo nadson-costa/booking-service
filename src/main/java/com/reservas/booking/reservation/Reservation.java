@@ -5,7 +5,11 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
+import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "reservations")
@@ -22,6 +26,9 @@ public class Reservation extends BaseEntity {
     @NotNull
     @Column(nullable = false)
     private Instant expiresAt;
+
+    @OneToMany(mappedBy = "reservation", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ReservationSeat> seats = new ArrayList<>();
 
 
     protected Reservation() {
@@ -42,6 +49,13 @@ public class Reservation extends BaseEntity {
 
     public Instant getExpiresAt() {
         return expiresAt;
+    }
+
+    public void reserveSeat(UUID seatId, BigDecimal pricePaid) {
+        if (this.status != ReservationStatus.PENDING) {
+            throw new IllegalStateException("So e possivel adicionar assentos a uma reserva PENDING, status atual: " + status);
+        }
+        this.seats.add(new ReservationSeat(this, seatId, pricePaid));
     }
 
 

@@ -40,7 +40,7 @@ public class Seat extends BaseEntity {
     @Column(nullable = false)
     private Long version;
 
-    public Seat() {
+    protected Seat() {
     }
 
     public Seat(UUID eventId, String section, String rowLabel, Integer number, SeatStatus status, Instant heldUntil, Long version) {
